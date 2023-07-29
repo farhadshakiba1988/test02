@@ -1,0 +1,47 @@
+version: '3.9'
+services:
+  app:
+    build:
+      context: .
+    image: app
+    container_name: Django_app
+    expose:
+      - 8000
+    volumes:
+      - .:/app
+    depends_on:
+      - database
+      - niginx
+    environment:
+      - DEBUG=False
+      - ALLOWED_HOSTS=*
+      - DATABASE-NAME=postgres
+      - DATABASE-USER=postgres
+      - DATABASE-PASSWORD=postgres
+      - DATABASE-HOST=database
+      - DATABASE-PORT=5432
+
+  datatbase:
+    container_name: database
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    restart: always
+
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./static:/app/static
+      - ./media:/app/media
+volumes:
+  postgres:
+  static:
+  media:
